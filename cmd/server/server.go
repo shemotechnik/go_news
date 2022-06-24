@@ -1,10 +1,13 @@
 package main
 
 import (
+	"log"
 	"skillfactory/go_news/pkg/api"
 	"skillfactory/go_news/pkg/storage"
 	"skillfactory/go_news/pkg/storage/memdb"
 	"net/http"
+	"skillfactory/go_news/pkg/storage/mongo"
+	"skillfactory/go_news/pkg/storage/postgres"
 )
 
 // Сервер GoNews.
@@ -21,22 +24,25 @@ func main() {
 	//
 	// БД в памяти.
 	db := memdb.New()
-    /*
+
 	// Реляционная БД PostgreSQL.
-	db2, err := postgres.New("postgres://postgres:postgres@server.domain/posts")
+	db2, err := postgres.New("postgres://postgres:123456@localhost/posts")
 	if err != nil {
 		log.Fatal(err)
 	}
 	// Документная БД MongoDB.
-	db3, err := mongo.New("mongodb://server.domain:27017/")
+	db3, err := mongo.New("mongodb://localhost:27017/")
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, _ = db2, db3
-	*/
+
+	_, _, _ = db, db2, db3
 
 	// Инициализируем хранилище сервера конкретной БД.
-	srv.db = db
+	srv.db = db3
+
+	//srv.db.UpdatePost(storage.Post{ID: 1, AuthorID: 0, Title: "AAAAAAAAAAAAAAA", Content: "BBBBBBBBBBBB", CreatedAt: 1231231231})
+	//srv.db.DeletePost(storage.Post{ID: 1})
 
 	// Создаём объект API и регистрируем обработчики.
 	srv.api = api.New(srv.db)
